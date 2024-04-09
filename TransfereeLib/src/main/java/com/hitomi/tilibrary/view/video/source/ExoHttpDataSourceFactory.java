@@ -16,16 +16,15 @@
 package com.hitomi.tilibrary.view.video.source;
 
 import androidx.annotation.Nullable;
+import androidx.media3.common.util.UnstableApi;
+import androidx.media3.datasource.HttpDataSource;
+import androidx.media3.datasource.TransferListener;
 
-import com.google.android.exoplayer2.upstream.HttpDataSource;
-import com.google.android.exoplayer2.upstream.HttpDataSource.BaseFactory;
-import com.google.android.exoplayer2.upstream.HttpDataSource.Factory;
-import com.google.android.exoplayer2.upstream.TransferListener;
 
 /**
  A {@link Factory} that produces {@link ExoHttpDataSource} instances.
  */
-public final class ExoHttpDataSourceFactory extends BaseFactory {
+@UnstableApi public final class ExoHttpDataSourceFactory extends HttpDataSource.BaseFactory {
 
     private final String userAgent;
     private final @Nullable

@@ -1,0 +1,69 @@
+[versions]
+agp = "8.3.1"
+#noinspection GradleDependency
+androidGifDrawable = "1.2.28"
+appcompat = "1.6.1"
+baseRvadapter = "3.0.3"
+baseAdapter = "3.0.3"
+constraintlayout = "2.1.4"
+design = "28.0.0"
+exoplayer = "1.3.0"
+glide = "4.16.0"
+immersionbar = "3.0.0"
+kotlin = "1.9.23"
+
+annotations = "23.0.0"
+android-compileSdk = "34"
+android-minSdk = "24"
+android-targetSdk = "34"
+
+jvmTarget = "17"
+leakcanaryAndroid = "2.3"
+luban = "1.1.8"
+picasso = "2.71828"
+progresspieview = "1.0.4"
+recyclerview = "1.3.2"
+universalImageLoader = "1.9.5"
+utilcodex = "1.31.1"
+
+[libraries]
+android-gif-drawable = { module = "pl.droidsonroids.gif:android-gif-drawable", version.ref = "androidGifDrawable" }
+appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+base-rvadapter = { module = "com.zhy:base-rvadapter", version.ref = "baseRvadapter" }
+base-adapter = { module = "com.zhy:base-adapter", version.ref = "baseAdapter" }
+constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
+design = { module = "com.android.support:design", version.ref = "design" }
+media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "exoplayer" }
+media3-exoplayer-rtmp = { module = "androidx.media3:media3-datasource-rtmp", version.ref = "exoplayer" }
+media3-exoplayer-hls = { module = "androidx.media3:media3-exoplayer-hls", version.ref = "exoplayer" }
+media3-exoplayer-smoothstreaming = { module = "androidx.media3:media3-exoplayer-smoothstreaming", version.ref = "exoplayer" }
+media3-exoplayer-rtsp = { module = "androidx.media3:media3-exoplayer-rtsp", version.ref = "exoplayer" }
+media3-session = { module = "androidx.media3:media3-session", version.ref = "exoplayer" }
+media3-extractor = { module = "androidx.media3:media3-extractor", version.ref = "exoplayer" }
+media3-datasource = { module = "androidx.media3:media3-datasource", version.ref = "exoplayer" }
+media3-cast = { module = "androidx.media3:media3-cast", version.ref = "exoplayer" }
+media3-exoplayer-dash = { module = "androidx.media3:media3-exoplayer-dash", version.ref = "exoplayer" }
+glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
+immersionbar = { module = "com.gyf.immersionbar:immersionbar", version.ref = "immersionbar" }
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+kotlin-stdlib-jdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
+leakcanary-android = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanaryAndroid" }
+luban= { module = "top.zibin:Luban", version.ref = "luban" }
+picasso = { module = "com.squareup.picasso:picasso", version.ref = "picasso" }
+progresspieview = { module = "com.github.filippudak.progresspieview:library", version.ref = "progresspieview" }
+recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
+universal-image-loader = { module = "com.nostra13.universalimageloader:universal-image-loader", version.ref = "universalImageLoader" }
+utilcodex = { module = "com.blankj:utilcodex", version.ref = "utilcodex" }
+
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
+
+
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+
+# 下面这个是假的，只是为了占位
+jvmTargetPlaceHolder = { id = "org.jdk.kotlin.holder", version.ref = "jvmTarget" }

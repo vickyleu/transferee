@@ -1,18 +1,22 @@
 package com.hitomi.tilibrary.view.video;
 
 import android.content.Context;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.media3.common.Player;
+import androidx.media3.common.VideoSize;
+import androidx.media3.common.util.UnstableApi;
+import androidx.media3.exoplayer.DefaultLoadControl;
+import androidx.media3.exoplayer.DefaultRenderersFactory;
+import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.exoplayer.source.LoopingMediaSource;
+import androidx.media3.exoplayer.source.MediaSource;
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector;
 
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.source.LoopingMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.video.VideoListener;
 import com.hitomi.tilibrary.view.video.source.ExoSourceManager;
 
 import java.io.File;
@@ -20,6 +24,7 @@ import java.io.File;
 /**
  * Created by Vans Z on 2020/5/19.
  */
+@UnstableApi
 public class ExoVideoView extends AdaptiveTextureView {
     private static final String TAG = "ExoVideoView";
     public static final String CACHE_DIR = "TransExo";
@@ -27,7 +32,7 @@ public class ExoVideoView extends AdaptiveTextureView {
     private String url;
     private boolean requestLayout;
     private boolean invalidate;
-    private SimpleExoPlayer exoPlayer;
+    private ExoPlayer exoPlayer;
     private ExoSourceManager exoSourceManager;
     private File cacheFile;
     private VideoStateChangeListener videoStateChangeListener;
@@ -49,23 +54,28 @@ public class ExoVideoView extends AdaptiveTextureView {
     }
 
     private void newExoPlayer(@NonNull Context context) {
-        exoPlayer = ExoPlayerFactory.newSimpleInstance(context);
+        @DefaultRenderersFactory.ExtensionRendererMode int extensionRendererMode = DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER;
+        DefaultRenderersFactory rendererFactory = new DefaultRenderersFactory(context);
+        rendererFactory.setExtensionRendererMode(extensionRendererMode);
+        exoPlayer = new ExoPlayer.Builder(context, rendererFactory)
+                .setLooper(Looper.myLooper())
+                .setTrackSelector(new DefaultTrackSelector(context))
+                .setLoadControl(new DefaultLoadControl()).build();
         exoPlayer.setVideoTextureView(this);
-        exoPlayer.addVideoListener(new VideoListener() {
+        exoPlayer.addListener(new Player.Listener() {
             @Override
-            public void onVideoSizeChanged(int width, int height, int unAppliedRotationDegrees, float pixelWidthHeightRatio) {
-                if (currentVideoWidth != width && currentVideoHeight != height) {
+            public void onVideoSizeChanged(VideoSize videoSize) {
+                if (currentVideoWidth != videoSize.width && currentVideoHeight != videoSize.height) {
                     Log.e(TAG, "ExoVideoView.invoke()");
-                    currentVideoWidth = width;
-                    currentVideoHeight = height;
+                    currentVideoWidth = videoSize.width;
+                    currentVideoHeight = videoSize.height;
                     requestLayout();
                     requestLayout = true;
                 }
             }
-        });
-        exoPlayer.addListener(new Player.EventListener() {
+
             @Override
-            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+            public void onPlaybackStateChanged(int playbackState) {
                 if (Player.STATE_BUFFERING == playbackState) { // 缓冲中
                     if (videoStateChangeListener != null)
                         videoStateChangeListener.onVideoBuffering();

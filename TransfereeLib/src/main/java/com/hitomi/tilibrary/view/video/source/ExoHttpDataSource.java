@@ -1,19 +1,23 @@
 package com.hitomi.tilibrary.view.video.source;
 
+import static androidx.media3.datasource.DataSpec.FLAG_ALLOW_GZIP;
+import static androidx.media3.datasource.HttpDataSource.HttpDataSourceException.TYPE_OPEN;
+
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.media3.common.util.Assertions;
+import androidx.media3.common.util.UnstableApi;
+import androidx.media3.common.util.Util;
+import androidx.media3.datasource.BaseDataSource;
+import androidx.media3.datasource.DataSourceException;
+import androidx.media3.datasource.DataSpec;
+import androidx.media3.datasource.HttpDataSource;
+import androidx.media3.datasource.TransferListener;
 
-import com.google.android.exoplayer2.upstream.BaseDataSource;
-import com.google.android.exoplayer2.upstream.DataSourceException;
-import com.google.android.exoplayer2.upstream.DataSpec;
-import com.google.android.exoplayer2.upstream.HttpDataSource;
-import com.google.android.exoplayer2.upstream.TransferListener;
-import com.google.android.exoplayer2.util.Assertions;
-import com.google.android.exoplayer2.util.Log;
-import com.google.android.exoplayer2.util.Predicate;
-import com.google.android.exoplayer2.util.Util;
+import com.google.common.base.Predicate;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -45,9 +49,7 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import static com.google.android.exoplayer2.upstream.DataSpec.FLAG_ALLOW_GZIP;
-import static com.google.android.exoplayer2.upstream.HttpDataSource.HttpDataSourceException.TYPE_OPEN;
-
+@UnstableApi
 public class ExoHttpDataSource extends BaseDataSource implements HttpDataSource {
     public static final int DEFAULT_CONNECT_TIMEOUT_MILLIS = 8000;
     public static final int DEFAULT_READ_TIMEOUT_MILLIS = 8000;
@@ -99,7 +101,7 @@ public class ExoHttpDataSource extends BaseDataSource implements HttpDataSource 
     }
 
     /**
-     @deprecated
+     * @deprecated
      */
     @Deprecated
     public ExoHttpDataSource(String userAgent, @Nullable Predicate<String> contentTypePredicate, @Nullable TransferListener listener) {
@@ -107,7 +109,7 @@ public class ExoHttpDataSource extends BaseDataSource implements HttpDataSource 
     }
 
     /**
-     @deprecated
+     * @deprecated
      */
     @Deprecated
     public ExoHttpDataSource(String userAgent, @Nullable Predicate<String> contentTypePredicate, @Nullable TransferListener listener, int connectTimeoutMillis, int readTimeoutMillis) {
@@ -115,7 +117,7 @@ public class ExoHttpDataSource extends BaseDataSource implements HttpDataSource 
     }
 
     /**
-     @deprecated
+     * @deprecated
      */
     @Deprecated
     public ExoHttpDataSource(String userAgent, @Nullable Predicate<String> contentTypePredicate, @Nullable TransferListener listener, int connectTimeoutMillis, int readTimeoutMillis, boolean allowCrossProtocolRedirects, @Nullable RequestProperties defaultRequestProperties) {
@@ -150,6 +152,7 @@ public class ExoHttpDataSource extends BaseDataSource implements HttpDataSource 
         this.requestProperties.clear();
     }
 
+
     public long open(DataSpec dataSpec) throws HttpDataSourceException {
         this.dataSpec = dataSpec;
         this.bytesRead = 0L;
@@ -174,7 +177,7 @@ public class ExoHttpDataSource extends BaseDataSource implements HttpDataSource 
 
         if (responseCode >= 200 && responseCode <= 299) {
             String contentType = this.connection.getContentType();
-            if (this.contentTypePredicate != null && !this.contentTypePredicate.evaluate(contentType)) {
+            if (this.contentTypePredicate != null && !this.contentTypePredicate.apply(contentType)) {
                 this.closeConnectionQuietly();
                 throw new InvalidContentTypeException(contentType, dataSpec);
             } else {
@@ -204,7 +207,9 @@ public class ExoHttpDataSource extends BaseDataSource implements HttpDataSource 
         } else {
             Map<String, List<String>> headers = this.connection.getHeaderFields();
             this.closeConnectionQuietly();
-            InvalidResponseCodeException exception = new InvalidResponseCodeException(responseCode, responseMessage, headers, dataSpec);
+            InvalidResponseCodeException exception = new InvalidResponseCodeException(responseCode, responseMessage,
+                    null, headers, dataSpec,new byte[]{}
+            );
             if (responseCode == 416) {
                 exception.initCause(new DataSourceException(0));
             }
@@ -523,6 +528,19 @@ public class ExoHttpDataSource extends BaseDataSource implements HttpDataSource 
                 ;
             }
 
+        }
+    }
+
+    @Override
+    public int getResponseCode() {
+        if (this.connection != null) {
+            try {
+                return this.connection.getResponseCode();
+            } catch (IOException e) {
+                return 0;
+            }
+        } else {
+            return 0;
         }
     }
 

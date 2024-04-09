@@ -8,7 +8,9 @@ import android.content.DialogInterface;
 import android.view.KeyEvent;
 import android.widget.ImageView;
 
+import androidx.annotation.OptIn;
 import androidx.appcompat.app.AlertDialog;
+import androidx.media3.common.util.UnstableApi;
 
 import com.gyf.immersionbar.ImmersionBar;
 import com.hitomi.tilibrary.style.index.CircleIndexIndicator;
@@ -173,7 +175,7 @@ public class Transferee implements DialogInterface.OnShowListener,
     /**
      * 清除 transferee 缓存,包括图片和视频文件缓存，注意清除视频缓存必须保证 transferee 是关闭状态
      */
-    public void clear() {
+    @OptIn(markerClass = UnstableApi.class) public void clear() {
         if (transConfig != null && transConfig.getImageLoader() != null) {
             transConfig.getImageLoader().clearCache();
         }
